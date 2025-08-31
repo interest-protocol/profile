@@ -35,7 +35,7 @@ public struct Config has key {
 
 public struct PluginKey<phantom T>() has copy, drop, store;
 
-public struct BlastProfileAdmin has key, store {
+public struct ProfileAdmin has key, store {
     id: UID,
 }
 
@@ -58,10 +58,10 @@ fun init(otw: PROFILE, ctx: &mut TxContext) {
         profiles: table::new(ctx),
         plugins: bag::new(ctx),
         nonces: table::new(ctx),
-        version: profile::blast_profile_constants::package_version!(),
+        version: profile::profile_constants::package_version!(),
     };
 
-    let admin = BlastProfileAdmin {
+    let admin = ProfileAdmin {
         id: object::new(ctx),
     };
 
@@ -82,10 +82,7 @@ public fun new(config: &mut Config, name: String, image_url: String, ctx: &mut T
 
     let sender = ctx.sender();
 
-    assert!(
-        !config.profiles.contains(sender),
-        profile::blast_profile_errors::profile_already_created!(),
-    );
+    assert!(!config.profiles.contains(sender), profile::profile_errors::profile_already_created!());
 
     let profile = Profile {
         id: object::new(ctx),
@@ -145,7 +142,7 @@ public fun update_metadata(
 
     assert!(
         ed25519::ed25519_verify(&signature, &config.public_key, &bcs::to_bytes(&message)),
-        profile::blast_profile_errors::invalid_metadata_signature!(),
+        profile::profile_errors::invalid_metadata_signature!(),
     );
 
     profile.metadata = metadata;
@@ -215,7 +212,7 @@ public fun next_nonce(config: &Config, profile: address): u64 {
 
 // === Admin Only Functions ===
 
-public fun set_public_key(config: &mut Config, _: &BlastProfileAdmin, public_key: vector<u8>) {
+public fun set_public_key(config: &mut Config, _: &ProfileAdmin, public_key: vector<u8>) {
     config.public_key = public_key;
 }
 
@@ -227,11 +224,11 @@ public fun set_version(config: &mut Config, version: u64) {
 
 fun assert_package_version(config: &Config) {
     assert!(
-        config.version == profile::blast_profile_constants::package_version!(),
-        profile::blast_profile_errors::outdated_package_version!(),
+        config.version == profile::profile_constants::package_version!(),
+        profile::profile_errors::outdated_package_version!(),
     );
 }
 
 fun assert_is_owner(profile: &Profile, ctx: &TxContext) {
-    assert!(profile.owner == ctx.sender(), profile::blast_profile_errors::not_owner!());
+    assert!(profile.owner == ctx.sender(), profile::profile_errors::not_owner!());
 }

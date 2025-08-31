@@ -1,5 +1,5 @@
 #[allow(unused_const)]
-module profile::blast_profile_errors;
+module profile::profile_errors;
 
 #[test_only]
 const EProfileAlreadyCreated: u64 = 1;

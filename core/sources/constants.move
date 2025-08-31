@@ -1,5 +1,5 @@
 #[allow(unused_const)]
-module profile::blast_profile_constants;
+module profile::profile_constants;
 
 #[test_only]
 const PACKAGE_VERSION: u64 = 1;
