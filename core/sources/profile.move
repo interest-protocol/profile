@@ -103,19 +103,19 @@ public fun share(profile: Profile) {
     transfer::share_object(profile);
 }
 
-public fun update_image_url(profile: &mut Profile, image_url: String, ctx: &mut TxContext) {
+public fun set_image_url(profile: &mut Profile, image_url: String, ctx: &mut TxContext) {
     profile.assert_is_owner(ctx);
 
     profile.image_url = image_url;
 }
 
-public fun update_name(profile: &mut Profile, name: String, ctx: &mut TxContext) {
+public fun set_name(profile: &mut Profile, name: String, ctx: &mut TxContext) {
     profile.assert_is_owner(ctx);
 
     profile.name = name;
 }
 
-public fun update_metadata(
+public fun set_metadata(
     config: &mut Config,
     profile: &mut Profile,
     metadata: VecMap<String, String>,
