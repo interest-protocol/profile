@@ -43,6 +43,7 @@ public struct MetadataMessage has copy, drop, store {
     profile: address,
     new_metadata: VecMap<String, String>,
     nonce: u64,
+    version: u64,
 }
 
 public struct PROFILE() has drop;
@@ -77,7 +78,7 @@ fun init(otw: PROFILE, ctx: &mut TxContext) {
 
 // === Public Mutative Functions ===
 
-public fun new(config: &mut Config, name: String, image_url: String, ctx: &mut TxContext): Profile {
+public fun new(config: &mut Config, ctx: &mut TxContext): Profile {
     config.assert_package_version();
 
     let sender = ctx.sender();
@@ -86,8 +87,8 @@ public fun new(config: &mut Config, name: String, image_url: String, ctx: &mut T
 
     let profile = Profile {
         id: object::new(ctx),
-        name,
-        image_url,
+        name: b"".to_string(),
+        image_url: b"".to_string(),
         plugins: bag::new(ctx),
         owner: sender,
         metadata: vec_map::empty(),
@@ -136,6 +137,7 @@ public fun update_metadata(
         profile: profile_address,
         new_metadata: metadata,
         nonce: *nonce,
+        version: config.version,
     };
 
     *nonce = *nonce + 1;
@@ -216,7 +218,7 @@ public fun set_public_key(config: &mut Config, _: &ProfileAdmin, public_key: vec
     config.public_key = public_key;
 }
 
-public fun set_version(config: &mut Config, version: u64) {
+public fun set_version(config: &mut Config, _: &ProfileAdmin, version: u64) {
     config.version = version;
 }
 
